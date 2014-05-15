@@ -1,0 +1,59 @@
+name : haskell-platform
+version : 0.0.1
+description: Latest Haskell Platform
+type : main
+platform : ubuntu@12.04
+keywords:
+  - haskell
+  - ghc
+  - haskell-platform
+packages:
+  - ghc@7.6.3
+  - haskell-platform@2013.2.0.0
+script: |
+  sudo apt-get update -y
+  wget http://www.haskell.org/ghc/dist/7.6.3/ghc-7.6.3-x86_64-unknown-linux.tar.bz2
+  tar xjf ghc-7.6.3-x86_64-unknown-linux.tar.bz2
+  cd ghc-7.6.3
+  ./configure
+  make install
+  cd
+  wget http://www.haskell.org/platform/download/2013.2.0.0/haskell-platform-2013.2.0.0.tar.gz
+  tar xzf haskell-platform-2013.2.0.0.tar.gz
+  cd haskell-platform-2013.2.0.0
+  ./configure
+  make
+  make install
+
+box-detect:
+  priority : 1000
+  version :
+  detect:
+    - files:
+      - *.cabal
+
+default-build:
+  haskell-platform:
+    priority : 50
+    detect:
+      - default: true
+    text-to-append: |
+      # Build definition
+      build:
+        # The steps that will be executed on build
+        steps:
+          - script:
+              name: install dependencies
+              code: |
+                cabal install --only-dependencies
+
+          - script:
+              name: build package
+              code: |
+                cabal configure --enable-tests
+                cabal build
+
+          - script:
+              name: test package
+              code: |
+                cabal test

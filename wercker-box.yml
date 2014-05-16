@@ -57,6 +57,7 @@ default-build:
           - script:
               name: install dependencies
               code: |
+                cabal update
                 cabal install --only-dependencies
           - script:
               name: build package

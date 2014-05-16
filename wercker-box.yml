@@ -11,26 +11,30 @@ packages:
   - ghc@7.6.3
   - haskell-platform@2013.2.0.0
 script: |
+  export GHC_VER=7.6.3
+  export HP_VER=2013.2.0.0
   sudo apt-get update -y
-  wget http://www.haskell.org/ghc/dist/7.6.3/ghc-7.6.3-x86_64-unknown-linux.tar.bz2
-  tar xjf ghc-7.6.3-x86_64-unknown-linux.tar.bz2
-  cd ghc-7.6.3
+  sudo apt-get install -y make libgmp-dev freeglut3-dev
+  sudo ln -s /usr/lib/x86_64-linux-gnu/libgmp.so.10.0.2 /usr/lib/libgmp.so.3
+  wget http://www.haskell.org/ghc/dist/${GHC_VER}/ghc-${GHC_VER}-x86_64-unknown-linux.tar.bz2
+  tar xjf ghc-${GHC_VER}-x86_64-unknown-linux.tar.bz2
+  cd ghc-${GHC_VER}
   ./configure
-  make install
+  sudo make install
   cd
-  wget http://www.haskell.org/platform/download/2013.2.0.0/haskell-platform-2013.2.0.0.tar.gz
-  tar xzf haskell-platform-2013.2.0.0.tar.gz
-  cd haskell-platform-2013.2.0.0
+  wget http://www.haskell.org/platform/download/${HP_VER}/haskell-platform-${HP_VER}.tar.gz
+  tar xzf haskell-platform-${HP_VER}.tar.gz
+  cd haskell-platform-${HP_VER}
   ./configure
   make
-  make install
+  sudo make install
 
 box-detect:
   priority : 1000
   version :
   detect:
     - files:
-      - *.cabal
+      - '*.cabal'
 
 default-build:
   haskell-platform:
@@ -46,14 +50,17 @@ default-build:
               name: install dependencies
               code: |
                 cabal install --only-dependencies
-
           - script:
               name: build package
               code: |
                 cabal configure --enable-tests
                 cabal build
-
           - script:
               name: test package
               code: |
                 cabal test
+          - script:
+              name: echo haskell information
+              code: |
+                echo "ghc version $(ghc --version) running"
+                echo "cabal version $(cabal --version) running"

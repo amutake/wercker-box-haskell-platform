@@ -10,9 +10,10 @@ keywords:
 packages:
   - ghc@7.6.3
   - haskell-platform@2013.2.0.0
+env:
+  GHC_VER: 7.6.3
+  HP_VER: 2013.2.0.0
 script: |
-  export GHC_VER=7.6.3
-  export HP_VER=2013.2.0.0
   sudo apt-get update -y
   sudo apt-get install -y make wget libgmp-dev freeglut3-dev
   sudo ln -s /usr/lib/x86_64-linux-gnu/libgmp.so.10.0.2 /usr/lib/libgmp.so.3

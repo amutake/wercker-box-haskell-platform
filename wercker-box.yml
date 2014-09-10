@@ -1,42 +1,36 @@
-name : haskell-platform
-version : 0.0.2
+name: haskell-platform
+version: 0.0.3
 description: Latest Haskell Platform
-type : main
-platform : ubuntu@12.04
+type: main
+inherits: wercker/ubuntu12.04-webessentials@1.0.4
+platform: ubuntu@12.04
 keywords:
   - haskell
   - ghc
   - haskell-platform
   - cabal
 packages:
-  - ghc@7.6.3
-  - haskell-platform@2013.2.0.0
+  - ghc@7.8.3
+  - haskell-platform@2014.2.0.0
 script: |
   # variables
-  GHC_VER=7.6.3
-  HP_VER=2013.2.0.0
+  GHC_VER=7.8.3
+  HP_VER=2014.2.0.0
+
+  HP_TARBALL=haskell-platform-${HP_VER}-unknown-linux-x86_64.tar.gz
 
   # install dependencies
   sudo apt-get update -y
-  sudo apt-get install -y build-essential wget libgmp-dev freeglut3-dev zlib1g-dev
-  sudo ln -s /usr/lib/x86_64-linux-gnu/libgmp.so.10.0.2 /usr/lib/libgmp.so.3
-
-  # install ghc
-  cd $HOME
-  wget http://www.haskell.org/ghc/dist/${GHC_VER}/ghc-${GHC_VER}-x86_64-unknown-linux.tar.bz2
-  tar xjf ghc-${GHC_VER}-x86_64-unknown-linux.tar.bz2
-  cd ghc-${GHC_VER}
-  ./configure
-  sudo make install
+  sudo apt-get install -y libgmp-dev freeglut3-dev
 
   # install haskell-platform
-  cd $HOME
-  wget http://www.haskell.org/platform/download/${HP_VER}/haskell-platform-${HP_VER}.tar.gz
-  tar xzf haskell-platform-${HP_VER}.tar.gz
-  cd haskell-platform-${HP_VER}
-  ./configure
-  make
-  sudo make install
+  cd
+  wget https://www.haskell.org/platform/download/${HP_VER}/${HP_TARBALL}
+  cd /
+  sudo tar xf ~/${HP_TARBALL}
+  sudo /usr/local/haskell/ghc-${GHC_VER}-x86_64/bin/activate-hs
+  ghc --version
+  cabal --version
 
 box-detect:
   priority : 1000
